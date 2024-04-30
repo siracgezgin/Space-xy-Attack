@@ -21,6 +21,6 @@ Oyun, arka plan müziği ve çarpışma ses efekti olmak üzere iki ses efekti i
 
 ![image](https://github.com/siracgezgin/Space-xy-Attack/assets/119105917/ceac38f4-106b-4375-bbb5-b2c7f43be126)
 ![image](https://github.com/siracgezgin/Space-xy-Attack/assets/119105917/e6d6d695-c50a-41bc-a0b5-72006bcfa7e8)
-![image](https://github.com/siracgezgin/Space-xy-Attack/assets/119105917/a2d8569a-47e1-4941-a7bc-57039d5e798d)
+![image](https://github.com/siracgezgin/Space-xy-Attack/assets/119105917/ab230b7d-fed0-4d4a-88e9-e9a2a140692e)
 ![image](https://github.com/siracgezgin/Space-xy-Attack/assets/119105917/377bb8ae-d92b-4270-8862-7e9db1858cf3)
 
