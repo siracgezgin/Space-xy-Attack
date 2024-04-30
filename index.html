@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Space-xy Attack</title>
+<style>
+  body {
+    text-align: center;
+    background-image: url('arkaplan.png'); 
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  canvas {
+    display: block;
+    margin: 20px auto;
+  }
+  #startButton { margin: 20px; }
+#playerNameDisplay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #0097B2; 
+    font-size: 20px;
+</style>
+</head>
+<body>
+<input type="text" id="playerName" placeholder="İsminizi girin" />
+<button id="startButton">Oyuna Başla</button>
+<canvas id="gameCanvas"></canvas>
+<div id="playerNameDisplay"></div>
+
+<!-- Ses efektleri -->
+<audio id="backgroundMusic" src="arka.mp3" loop></audio>
+<audio id="explosionSound" src="efekt.mp3"></audio>
+
+<script>
+// Oyun ayarları
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 800;
+canvas.height = 600;
+
+let playerName = '';
+let score = 0;
+let gameActive = false;
+
+// Arka plan resmi
+let backgroundImage = new Image();
+backgroundImage.src = 'arkaplan1.png'; 
+
+// Karakter ayarları
+const character = {
+  x: canvas.width / 2 - 22.5,
+  y: canvas.height - 90,
+  width: 100,
+  height: 100,
+  moveSpeed: 10,
+  bullets: [],
+  image: new Image(),  // yeni bir Image nesnesi 
+  shoot() {
+    this.bullets.push({ x: this.x + this.width / 2 - 2.5, y: this.y, speed: 7 });
+  },
+  update() {
+    this.bullets.forEach(bullet => {
+      bullet.y -= bullet.speed;
+    });
+    this.bullets = this.bullets.filter(bullet => bullet.y > 0);
+  },
+  draw() {
+    this.image.src = 'char.png';  // Image nesnesinin src özelliğini ayarladık
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);  // Resmi çizdik
+    this.bullets.forEach(bullet => {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(bullet.x, bullet.y, 5, 10);
+    });
+  }
+};
+// Asteroid ayarları
+const asteroids = [];
+function createAsteroid() {
+  const size = Math.random() * (60 - 30) + 30;
+  const asteroidImage = new Image();
+  const asteroidImages = ['as1.png', 'as2.png', 'as3.png', 'as4.png'];
+  asteroidImage.src = asteroidImages[Math.floor(Math.random() * asteroidImages.length)];
+  asteroids.push({
+    x: Math.random() * (canvas.width - size),
+    y: -size,
+    width: 100,
+    height: 100,
+    speed: 1.005,
+    image: asteroidImage
+  });
+}
+
+// Oyun döngüsü
+function updateGame() {
+  if (!gameActive) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Arka plan resmini çiz
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+  // Karakter güncellemesi
+  character.update();
+  character.draw();
+
+  // Asteroid güncellemesi
+  for (let i = asteroids.length - 1; i >= 0; i--) {
+    const asteroid = asteroids[i];
+    asteroid.y += asteroid.speed;
+
+    // Asteroid çarpışma kontrolü
+    character.bullets.forEach((bullet, bulletIndex) => {
+      if (bullet.x < asteroid.x + asteroid.width &&
+          bullet.x + 5 > asteroid.x &&
+          bullet.y < asteroid.y + asteroid.height &&
+          bullet.y + 10 > asteroid.y) {
+        asteroids.splice(i, 1);
+        character.bullets.splice(bulletIndex, 1);
+        score++;
+        document.getElementById('explosionSound').play();  // Çarpışma ses efekti
+      }
+    });
+
+    if (asteroid.y > canvas.height) {
+      alert('Game Over! ' + playerName + ' Aldığınız Puan: ' + score);
+      gameActive = false;
+      document.location.reload();
+    }
+  }
+
+  // Asteroid çizimi
+  asteroids.forEach(asteroid => {
+    ctx.drawImage(asteroid.image, asteroid.x, asteroid.y, asteroid.width, asteroid.height);
+  });
+
+  // Skor güncellemesi
+  ctx.fillStyle = 'white';
+  ctx.font = '20px Arial';
+  ctx.fillText('Skor: ' + score, 10, 30);
+  ctx.fillText(playerName, canvas.width / 2 - ctx.measureText(playerName).width / 2, 50);
+
+  requestAnimationFrame(updateGame);
+}
+
+// Oyunu başlatma butonu
+document.getElementById('startButton').addEventListener('click', function() {
+  playerName = document.getElementById('playerName').value;
+  if (playerName !== '') {
+    gameActive = true;
+    updateGame();
+    createAsteroid();
+    setInterval(createAsteroid, 3000); // her 3 saniyede bir yeni asteroid
+    document.getElementById('playerNameDisplay').innerText = playerName; // oyuncu ismini
+    let backgroundMusic = document.getElementById('backgroundMusic');
+    backgroundMusic.volume = 0.5; // ses seviyesini yarıya indir
+    backgroundMusic.play(); // arka plan müziğini başlat
+  } else {
+    alert('Lütfen isminizi girin.');
+  }
+});
+
+
+// Olay dinleyicileri
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') character.x -= character.moveSpeed;
+  if (e.key === 'ArrowRight') character.x += character.moveSpeed;
+  if (e.key === ' ' && gameActive) character.shoot();
+});
+</script>
+</body>
+</html>
