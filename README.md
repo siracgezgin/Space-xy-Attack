@@ -1,6 +1,9 @@
 # Oyunun Linki
 -> https://siracgezgin.serv00.net
 
+# Oyunun Videosu
+->https://youtu.be/ChjIGa4EHFU
+
 # Space-xy Attack
 Space-xy Attack, basit bir tarayıcı tabanlı 2D oyunudur. Oyuncunun amacı, ekranın altından yukarı doğru hareket eden asteroidleri yok etmektir.
 
